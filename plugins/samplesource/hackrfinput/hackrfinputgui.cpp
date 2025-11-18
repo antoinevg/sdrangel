@@ -281,7 +281,7 @@ void HackRFInputGui::displaySettings()
 	ui->lnaGainText->setText(tr("%1dB").arg(m_settings.m_lnaGain));
 	ui->lna->setValue(m_settings.m_lnaGain);
 
-    unsigned int bandwidthIndex = HackRFBandwidths::getBandwidthIndex(m_settings.m_bandwidth/1000);
+    unsigned int bandwidthIndex = HackRFValues::getRxBandwidthIndex(m_settings.m_bandwidth/1000);
 	ui->bbFilter->setCurrentIndex(bandwidthIndex);
 
 	ui->vgaText->setText(tr("%1dB").arg(m_settings.m_vgaGain));
@@ -292,24 +292,25 @@ void HackRFInputGui::displaySettings()
 
 void HackRFInputGui::displayBandwidths()
 {
-	unsigned int savedIndex = HackRFBandwidths::getBandwidthIndex(m_settings.m_bandwidth/1000);
+    unsigned int nb_bw = HackRFValues::getRxBandwidthCount();
+    unsigned int savedIndex = HackRFValues::getRxBandwidthIndex(m_settings.m_bandwidth/1000);
 	ui->bbFilter->blockSignals(true);
 	ui->bbFilter->clear();
 
-	for (unsigned int i = 0; i < HackRFBandwidths::m_nb_bw; i++)
+    for (unsigned int i = 0; i < nb_bw; i++)
 	{
-		ui->bbFilter->addItem(QString("%1M").arg(QString::number(HackRFBandwidths::m_bw_k[i]/1000.0, 'f', 2)));
+        ui->bbFilter->addItem(QString("%1M").arg(QString::number(HackRFValues::getRxBandwidth(i)/1000.0, 'f', 2)));
 	}
 
 	ui->bbFilter->blockSignals(false);
 
-	if (savedIndex < HackRFBandwidths::m_nb_bw)
+    if (savedIndex < nb_bw)
 	{
 		ui->bbFilter->setCurrentIndex(savedIndex);
 	}
 	else
 	{
-		ui->bbFilter->setCurrentIndex((int) HackRFBandwidths::m_nb_bw-1);
+        ui->bbFilter->setCurrentIndex((int) nb_bw - 1);
 	}
 }
 
@@ -358,7 +359,10 @@ void HackRFInputGui::on_autoBBF_toggled(bool checked)
 
 void HackRFInputGui::on_bbFilter_currentIndexChanged(int index)
 {
-    int newBandwidth = HackRFBandwidths::getBandwidth(index);
+    int newBandwidth = HackRFValues::getRxBandwidth(index);
+    qDebug() << "HackRFInputGui::on_bbFilter_currentIndexChanged("
+             << index << ", "
+             << newBandwidth << ")";
 	m_settings.m_bandwidth = newBandwidth * 1000;
     ui->autoBBF->setChecked(false);
     m_settingsKeys.append("bandwidth");

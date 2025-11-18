@@ -17,6 +17,10 @@
 // along with this program. If not, see <http://www.gnu.org/licenses/>.          //
 ///////////////////////////////////////////////////////////////////////////////////
 
+#include <QDebug>
+
+#include <libhackrf/hackrf.h>
+
 #include "devicehackrfvalues.h"
 
 const unsigned int HackRFBandwidths::m_nb_bw = 16;
@@ -63,4 +67,95 @@ unsigned int HackRFBandwidths::getBandwidthIndex(unsigned int bandwidth)
     return 0;
 }
 
+/* ------------------------------------------------------------------------- */
 
+// TODO drop these when we drop static
+unsigned int HackRFValues::m_nb_bw_tx = 0;
+unsigned int HackRFValues::m_bw_k_tx[32];
+unsigned int HackRFValues::m_nb_bw_rx = 0;
+unsigned int HackRFValues::m_bw_k_rx[32];
+
+HackRFValues::HackRFValues()
+{
+}
+
+HackRFValues::~HackRFValues()
+{
+}
+
+void HackRFValues::queryDevice(struct hackrf_device* device)
+{
+    // query and cache supported bandwidths
+    int result = hackrf_supported_filter_bandwidths(device, RADIO_FILTER_RX_BASEBAND, this->m_bw_k_rx, &this->m_nb_bw_rx);
+    if (result != HACKRF_SUCCESS) {
+        // TODO
+        return;
+    }
+    result = hackrf_supported_filter_bandwidths(device, RADIO_FILTER_TX_BASEBAND, this->m_bw_k_tx, &this->m_nb_bw_tx);
+    if (result != HACKRF_SUCCESS) {
+        // TODO
+        return;
+    }
+}
+
+unsigned int HackRFValues::getRxBandwidth(unsigned int bandwidth_index)
+{
+    qDebug() << "HackRFValues::getRxBandwidth(" << bandwidth_index << ")";
+
+    if (bandwidth_index < m_nb_bw_rx)
+    {
+        return m_bw_k_rx[bandwidth_index] / 1000;
+    }
+    else
+    {
+        return m_bw_k_rx[0] / 1000;
+    }
+
+    return 0;
+}
+
+unsigned int HackRFValues::getRxBandwidthIndex(unsigned int bandwidth)
+{
+    qDebug() << "HackRFValues::getRxBandwidthIndex(" << bandwidth << ")";
+
+    for (unsigned int i=0; i < m_nb_bw_rx; i++)
+    {
+        if (bandwidth == m_bw_k_rx[i] / 1000)
+        {
+            return i;
+        }
+    }
+
+    return 0;
+}
+
+unsigned int HackRFValues::getTxBandwidth(unsigned int bandwidth_index)
+{
+    qDebug() << "HackRFValues::getTxBandwidth(" << bandwidth_index << ")";
+
+    if (bandwidth_index < m_nb_bw_tx)
+    {
+        return m_bw_k_tx[bandwidth_index] / 1000;
+    }
+    else
+    {
+        return m_bw_k_tx[0] / 1000;
+    }
+
+    return 0;
+}
+
+unsigned int HackRFValues::getTxBandwidthIndex(unsigned int bandwidth)
+{
+    qDebug() << "HackRFValues::getTxBandwidthIndex(" << bandwidth << ")";
+
+    for (unsigned int i=0; i < m_nb_bw_tx; i++)
+    {
+        if (bandwidth == m_bw_k_tx[i] / 1000)
+        {
+            return i;
+        }
+    }
+
+    return 0;
+}

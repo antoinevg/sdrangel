@@ -31,4 +31,32 @@ public:
     static const unsigned int m_bw_k[];
 };
 
+class DEVICES_API HackRFValues {
+public:
+	HackRFValues();
+	virtual ~HackRFValues();
+
+	void queryDevice(struct hackrf_device* device);
+
+	// TODO support separate rx/tx filter bandwidths
+	// TODO drop static once I figure out to access this from hackrfinputgui.cpp
+    static unsigned int getRxBandwidth(unsigned int bandwidth_index);
+    static unsigned int getRxBandwidthCount() {
+		return m_nb_bw_rx;
+	}
+    static unsigned int getRxBandwidthIndex(unsigned int bandwidth);
+
+    static unsigned int getTxBandwidth(unsigned int bandwidth_index);
+    static unsigned int getTxBandwidthCount() {
+		return m_nb_bw_tx;
+	}
+    static unsigned int getTxBandwidthIndex(unsigned int bandwidth);
+
+private:
+	static unsigned int m_nb_bw_rx;
+	static unsigned int m_bw_k_rx[32];
+	static unsigned int m_nb_bw_tx;
+	static unsigned int m_bw_k_tx[32];
+};
+
 #endif /* DEVICES_HACKRF_DEVICEHACKRFVALUES_H_ */

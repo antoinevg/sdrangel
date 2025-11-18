@@ -274,7 +274,7 @@ void HackRFOutputGui::displaySettings()
 	ui->txvgaGainText->setText(tr("%1dB").arg(m_settings.m_vgaGain));
 	ui->txvga->setValue(m_settings.m_vgaGain);
 
-    unsigned int bandwidthIndex = HackRFBandwidths::getBandwidthIndex(m_settings.m_bandwidth/1000);
+    unsigned int bandwidthIndex = HackRFValues::getTxBandwidthIndex(m_settings.m_bandwidth/1000);
 	ui->bbFilter->setCurrentIndex(bandwidthIndex);
 
     blockApplySettings(false);
@@ -283,24 +283,25 @@ void HackRFOutputGui::displaySettings()
 void HackRFOutputGui::displayBandwidths()
 {
     blockApplySettings(true);
-	unsigned int savedIndex = HackRFBandwidths::getBandwidthIndex(m_settings.m_bandwidth/1000);
+    unsigned int nb_bw = HackRFValues::getTxBandwidthCount();
+    unsigned int savedIndex = HackRFValues::getTxBandwidthIndex(m_settings.m_bandwidth/1000);
 	ui->bbFilter->blockSignals(true);
 	ui->bbFilter->clear();
 
-	for (unsigned int i = 0; i < HackRFBandwidths::m_nb_bw; i++)
+    for (unsigned int i = 0; i < nb_bw; i++)
 	{
-		ui->bbFilter->addItem(QString("%1M").arg(QString::number(HackRFBandwidths::m_bw_k[i]/1000.0, 'f', 2)));
+        ui->bbFilter->addItem(QString("%1M").arg(QString::number(HackRFValues::getTxBandwidth(i)/1000.0, 'f', 2)));
 	}
 
 	ui->bbFilter->blockSignals(false);
 
-	if (savedIndex < HackRFBandwidths::m_nb_bw)
+    if (savedIndex < nb_bw)
 	{
 		ui->bbFilter->setCurrentIndex(savedIndex);
 	}
 	else
 	{
-		ui->bbFilter->setCurrentIndex((int) HackRFBandwidths::m_nb_bw-1);
+        ui->bbFilter->setCurrentIndex((int) nb_bw - 1);
 	}
 	blockApplySettings(false);
 }
@@ -342,7 +343,7 @@ void HackRFOutputGui::on_LOppm_valueChanged(int value)
 
 void HackRFOutputGui::on_bbFilter_currentIndexChanged(int index)
 {
-    int newBandwidth = HackRFBandwidths::getBandwidth(index);
+    int newBandwidth = HackRFValues::getTxBandwidth(index);
 	m_settings.m_bandwidth = newBandwidth * 1000;
     m_settingsKeys.append("bandwidth");
 	sendSettings();

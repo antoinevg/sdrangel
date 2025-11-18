@@ -21,6 +21,7 @@
 #define DEVICES_HACKRF_DEVICEHACKRFPARAM_H_
 
 #include "libhackrf/hackrf.h"
+#include "hackrf/devicehackrfvalues.h"
 
 /**
  * This structure is owned by each of the parties sharing the same physical device
@@ -35,9 +36,12 @@ struct DeviceHackRFParams
     struct hackrf_device* m_dev; //!< device handle if the party has ownership else 0
 
     DeviceHackRFParams() :
-        m_dev(0)
+	    m_dev(0),
+		m_values()
     {
     }
+
+	HackRFValues m_values;
 };
 
 

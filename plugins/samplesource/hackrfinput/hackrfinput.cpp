@@ -129,6 +129,10 @@ bool HackRFInput::openDevice()
         }
 
         m_sharedParams.m_dev = m_dev;
+        // query device capabilities
+        // TODO put this somewhere saner and init it in a more sane manner
+        // TODO error handling
+        m_sharedParams.m_values.queryDevice(m_dev);
     }
 
     qDebug("HackRFInput::openDevice: success");
@@ -461,8 +465,9 @@ bool HackRFInput::applySettings(const HackRFInputSettings& settings, const QList
 	{
         if (m_dev != 0)
 		{
-	        uint32_t bw_index = hackrf_compute_baseband_filter_bw_round_down_lt(settings.m_bandwidth + 1); // +1 so the round down to lower than yields desired bandwidth
-			rc = (hackrf_error) hackrf_set_baseband_filter_bandwidth(m_dev, bw_index);
+            //uint32_t bandwidth_hz = hackrf_compute_baseband_filter_bw_round_down_lt(settings.m_bandwidth + 1); // +1 so the round down to lower than yields desired bandwidth
+            uint32_t bandwidth_hz = settings.m_bandwidth;
+            rc = (hackrf_error) hackrf_set_baseband_filter_bandwidth(m_dev, bandwidth_hz);
 
 			if (rc != HACKRF_SUCCESS) {
 				qDebug("HackRFInput::applySettings: hackrf_set_baseband_filter_bandwidth failed: %s", hackrf_error_name(rc));
