@@ -44,7 +44,7 @@ Sample sSecond(const Sample& a, const Sample& b) {
 
 Sample sSecondInv(const Sample& a, const Sample& b) {
     (void) a;
-    return Sample{-b.real(), -b.imag()};
+    return Sample{static_cast<FixReal>(-b.real()),static_cast<FixReal>( -b.imag())};
 }
 
 Sample invfft2s(const std::complex<float>& a) { //!< Complex float to Sample for 1 side time correlation
@@ -125,7 +125,7 @@ bool DOA2Correlator::performCorr(
                 data1.begin() + size1,
                 m_data1p.begin(),
                 [](const Sample& s) -> Sample {
-                    return Sample{-s.real(), -s.imag()};
+                    return Sample{static_cast<FixReal>(-s.real()), static_cast<FixReal>(-s.imag())};
                 }
             );
         }

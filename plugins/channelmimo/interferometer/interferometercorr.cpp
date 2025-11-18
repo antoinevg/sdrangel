@@ -50,15 +50,15 @@ Sample sSecond(const Sample& a, const Sample& b) {
 
 Sample sSecondInv(const Sample& a, const Sample& b) {
     (void) a;
-    return Sample{-b.real(), -b.imag()};
+    return Sample{static_cast<FixReal>(-b.real()), static_cast<FixReal>(-b.imag())};
 }
 
 Sample sAdd(const Sample& a, const Sample& b) { //!< Sample addition
-    return Sample{(a.real()+b.real())/2, (a.imag()+b.imag())/2};
+    return Sample{static_cast<FixReal>((a.real()+b.real())/2), static_cast<FixReal>((a.imag()+b.imag())/2)};
 }
 
 Sample sAddInv(const Sample& a, const Sample& b) { //!< Sample addition
-    return Sample{(a.real()-b.real())/2, (a.imag()+b.imag())/2};
+    return Sample{static_cast<FixReal>((a.real()-b.real())/2), static_cast<FixReal>((a.imag()+b.imag())/2)};
 }
 
 Sample sMulConj(const Sample& a, const Sample& b) { //!< Sample multiply with conjugate
